@@ -19,12 +19,8 @@
 - **Discovery**:
   - Advanced search/filters
   - Trending topics tracking
+|Component | Technologies/Tools |
+|.|.|.|.|
+|.| Frontend  | React, Tailwind CSS |
 
-    | Component       | Technologies/Tools       |
-|-----------------|--------------------------|
-| Frontend        | React, Tailwind CSS      |
-| Backend         | Python Django            |
-| Database        | MySQL                    |
-| Design          | Figma (Wireframes/UI)   |
-| Version Control | GitHub                   |
-| IDE             | VS Code                  |
+

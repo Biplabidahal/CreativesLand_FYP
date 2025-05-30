@@ -19,8 +19,30 @@
 - **Discovery**:
   - Advanced search/filters
   - Trending topics tracking
-|Component | Technologies/Tools |
-|.|.|.|.|
-|.| Frontend  | React, Tailwind CSS |
+**Component & Technologies/Tools**
+ Frontend - React, Tailwind CSS
+ Backend - Python Django
+ Database - MySQL
+ Design - Figma (Wireframes/UI)
+ Version Control - Github
+ IDE - VS Code
+
+**. Installation Guide (Minimal)**
+1. Backend: 
+   ```bash
+   virtualenv env
+   ./env/Scripts/activate    
+   pip install -r requirements.txt
+   python .\manage.py makemigrations
+   python manage.py migrate
+   pip install pymysql
+   pip show mysqlclient
+   python .\manage.py runserver
+     
+**Critical Limitations**
+- No real-time collaboration
+- Region-limited payments
+- Mobile-responsive (no native app)
+- Manual content dispute resolution
 
 

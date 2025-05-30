@@ -1,0 +1,172 @@
+{% extends "base.html" %} {% block title %}Profile{% endblock %}
+<div>
+  {% block extra_head %}
+  <style>
+    /* Use Tailwind’s utility classes for most styling.
+     This extra CSS is only for text clamping */
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+  {% endblock %}
+</div>
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 p-8">
+  <div class="max-w-5xl mx-auto bg-white shadow rounded-lg overflow-hidden">
+    <!-- Profile Header -->
+    <div class="bg-primary-600 p-6 sm:p-8">
+      <div class="flex flex-col sm:flex-row items-center">
+        <div class="sm:mr-6 mb-4 sm:mb-0">
+          {% if request.user.profilePic %}
+          <img
+            src="{{ request.user.profilePic.url }}"
+            alt="Profile Picture"
+            class="h-28 w-28 rounded-full border-4 border-white shadow-lg object-cover"
+          />
+          {% else %}
+          <img
+            src="https://via.placeholder.com/150"
+            alt="Profile Picture"
+            class="h-28 w-28 rounded-full border-4 border-white shadow-lg object-cover"
+          />
+          {% endif %}
+        </div>
+        <div class="text-center sm:text-left">
+          <h2 class="text-3xl font-bold text-white">
+            {{ request.user.first_name }} {{ request.user.last_name }}
+          </h2>
+          <p class="text-white opacity-90">{{ request.user.email }}</p>
+          {% if request.user.phone %}
+          <p class="text-white opacity-90">{{ request.user.phone }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <!-- About Section -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-2">About Me</h3>
+        <p class="text-gray-700 leading-relaxed">
+          {{ request.user.bio|default:"No bio available." }}
+        </p>
+      </div>
+
+      <!-- Details Section -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-2">Details</h3>
+        <ul class="list-disc pl-5 text-gray-700">
+          {% if request.user.dob %}
+          <li>Date of Birth: {{ request.user.dob }}</li>
+          {% endif %} {% if request.user.phone %}
+          <li>Phone: {{ request.user.phone }}</li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Edit Profile Button -->
+      <div class="mb-8 text-right">
+        <a
+          href="{% url 'edit_profile' %}"
+          class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow transition"
+        >
+          Edit Profile
+        </a>
+      </div>
+
+      <!-- My Blogs Section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800">My Blogs</h3>
+          <a
+            href="{% url 'create_blog' %}"
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded shadow transition"
+          >
+            New Blog
+          </a>
+        </div>
+        {% if blogs %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {% for blog in blogs %}
+          <div
+            class="bg-gray-100 rounded-lg shadow overflow-hidden hover:shadow-lg transition"
+          >
+            <div class="h-48 w-full overflow-hidden">
+              {% if blog.thumbnail %}
+              <img
+                src="{{ blog.thumbnail.url }}"
+                alt="{{ blog.title }} image"
+                class="object-cover w-full h-full"
+              />
+              {% else %}
+              <img
+                src="https://via.placeholder.com/400x300"
+                alt="Default image"
+                class="object-cover w-full h-full"
+              />
+              {% endif %}
+            </div>
+            <div class="p-4">
+              <h4 class="text-xl font-semibold text-gray-800 mb-2">
+                {{ blog.title }}
+              </h4>
+              <p class="text-gray-600 mb-4 line-clamp-3">
+                {{ blog.description|safe|truncatewords:20 }}
+              </p>
+              <div class="mb-4">
+                {% if blog.status == 'draft' %}
+                <span
+                  class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full mr-2"
+                >
+                  Draft
+                </span>
+                {% elif blog.status == 'completed' %}
+                <span
+                  class="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full mr-2"
+                >
+                  Posted
+                </span>
+                {% endif %} {% if blog.visibility == 'public' %}
+                <span
+                  class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full"
+                >
+                  Public
+                </span>
+                {% elif blog.visibility == 'private' %}
+                <span
+                  class="inline-block px-2 py-1 bg-pink-100 text-pink-800 text-xs font-semibold rounded-full"
+                >
+                  Private
+                </span>
+                {% endif %}
+              </div>
+              <div class="flex justify-between">
+                <a
+                  href="{% url 'edit_blog' blog.id %}"
+                  class="text-indigo-600 hover:underline"
+                >
+                  Edit
+                </a>
+                <a
+                  href="{% url 'delete_blog' blog.id %}"
+                  class="text-red-600 hover:underline"
+                >
+                  Delete
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">You have not created any blogs yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

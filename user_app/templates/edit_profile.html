@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Gradient styles for headings and buttons */
+    .text-gradient {
+        background: linear-gradient(to right, #141414, #525252);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(to right, #141414, #525252);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 py-12">
+    <div class="max-w-lg w-full bg-white shadow-md rounded-lg overflow-hidden m-6 p-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gradient">Edit Profile</h2>
+            <p class="text-gray-600">Update your account details below</p>
+        </div>
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            <!-- Email (read-only) -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input type="email" value="{{ request.user.email }}" disabled
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100 outline-none text-gray-700" />
+            </div>
+
+            <!-- Username -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                <input type="text" name="username" value="{{ request.user.username }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700"
+                    placeholder="Username" required />
+            </div>
+
+            <!-- First Name & Last Name -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <input type="text" name="first_name" value="{{ request.user.first_name }}"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700"
+                        placeholder="First Name" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                    <input type="text" name="last_name" value="{{ request.user.last_name }}"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700"
+                        placeholder="Last Name" required />
+                </div>
+            </div>
+
+            <!-- Phone Number & Date of Birth -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input type="tel" name="phone" value="{{ request.user.phone }}"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700"
+                        placeholder="+1 234 567 890" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                    <input type="date" name="dob" value="{{ request.user.dob|date:'Y-m-d' }}"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700" />
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                <textarea name="bio" rows="4"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700"
+                    placeholder="Tell us about yourself...">{{ request.user.bio }}</textarea>
+            </div>
+
+            <!-- Profile Picture -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                <input type="file" name="profilePic"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-800 outline-none text-gray-700" />
+                {% if request.user.profilePic %}
+                <div class="mt-2">
+                    <img src="{{ request.user.profilePic.url }}" alt="Current Profile Picture"
+                        class="h-20 w-20 rounded-full object-cover">
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-right">
+                <button type="submit"
+                    class="px-6 py-3 rounded-lg bg-gradient text-white hover:opacity-90 transition-all duration-300 transform hover:scale-105">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

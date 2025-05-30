@@ -1,0 +1,120 @@
+{% extends "base.html" %} {% block title %}Wishlist{% endblock %}
+
+<div>
+  {% block extra_head %}
+  <style>
+    .wishlist-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .wishlist-table th,
+    .wishlist-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    .wishlist-table th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+    .wishlist-table img {
+      width: 100px;
+      height: auto;
+      object-fit: cover;
+    }
+  </style>
+  {% endblock %}
+</div>
+
+{% block content %}
+<div class="py-12">
+  <div class="container mx-auto max-w-7xl px-4">
+    <div class="mb-6">
+      <a href="{% url 'posts' %}" class="text-blue-600 hover:underline">
+        &larr; Back to Blog Posts
+      </a>
+    </div>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">My Wishlist</h2>
+    <table class="wishlist-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="wishlistContainer">
+        <!-- Wishlist items will render here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Renders the wishlist table by reading from localStorage.
+  function renderWishlist() {
+    var container = document.getElementById("wishlistContainer");
+    container.innerHTML = "";
+    var wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    if (wishlist.length === 0) {
+      container.innerHTML =
+        '<tr><td colspan="4" class="text-center text-gray-600">No items in your wishlist.</td></tr>';
+      return;
+    }
+    wishlist.forEach(function (item) {
+      // Create a table row.
+      var row = document.createElement("tr");
+
+      // Image cell.
+      var imgCell = document.createElement("td");
+      var img = document.createElement("img");
+      img.src = item.thumbnail || "https://via.placeholder.com/400x300";
+      img.alt = item.title || "No title";
+      imgCell.appendChild(img);
+      row.appendChild(imgCell);
+
+      // Title cell (with navigation link).
+      var titleCell = document.createElement("td");
+      var link = document.createElement("a");
+      link.href = item.detail || "#";
+      link.className = "text-blue-600 hover:underline";
+      link.innerText = item.title || "No Title";
+      titleCell.appendChild(link);
+      row.appendChild(titleCell);
+
+      // Author cell.
+      var authorCell = document.createElement("td");
+      authorCell.innerText = item.author || "N/A";
+      row.appendChild(authorCell);
+
+      // Actions cell.
+      var actionsCell = document.createElement("td");
+      var removeBtn = document.createElement("button");
+      removeBtn.className = "text-red-600 hover:underline";
+      removeBtn.innerText = "Remove";
+      removeBtn.onclick = function () {
+        removeFromWishlist(item.id);
+        renderWishlist();
+      };
+      actionsCell.appendChild(removeBtn);
+      row.appendChild(actionsCell);
+
+      container.appendChild(row);
+    });
+  }
+
+  // Removes a post from the wishlist.
+  function removeFromWishlist(postId) {
+    var wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    wishlist = wishlist.filter(function (item) {
+      return item.id !== postId;
+    });
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }
+
+  // Render wishlist on page load.
+  document.addEventListener("DOMContentLoaded", function () {
+    renderWishlist();
+  });
+</script>
+{% endblock %}

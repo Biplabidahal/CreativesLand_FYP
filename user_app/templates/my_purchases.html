@@ -1,0 +1,102 @@
+{% extends "base.html" %} {% block title %}My Purchases{% endblock %}
+<div>
+  {% block content %}
+  <div class="py-12">
+    <div class="container mx-auto max-w-4xl px-4">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">My Purchases</h1>
+
+      {% if payments %}
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Blog
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Amount
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Date
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for payment in payments %}
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ payment.blog.title }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  by {{ payment.blog.author.get_full_name }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">
+                  Rs. {{ payment.amount }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">
+                  {{ payment.created_at|date:"M d, Y" }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  {{ payment.created_at|time:"H:i" }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                >
+                  {{ payment.payment_status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <a
+                  href="{% url 'post_detail' payment.blog.id %}"
+                  class="text-blue-600 hover:text-blue-900"
+                  >View Blog</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="bg-white shadow rounded-lg p-6 text-center">
+        <p class="text-gray-700">You haven't purchased any blogs yet.</p>
+        <a
+          href="{% url 'posts' %}"
+          class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Browse Blogs
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endblock %}
+</div>

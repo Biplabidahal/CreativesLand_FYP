@@ -1,0 +1,237 @@
+{% extends "base.html" %} {% block title %}Posts{% endblock %}
+<div>
+  {% block extra_head %}
+  <style>
+    /* Custom styles */
+    .line-clamp-3 {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .wishlist-btn {
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    /* Styles for tags */
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem; /* Space between tags */
+      margin-bottom: 1rem; /* Space below the tags */
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background-color: #f0f0f0; /* Light grey background */
+      border-radius: 0.25rem;
+      color: #333; /* Dark text color */
+      text-decoration: none;
+      font-size: 0.875rem; /* Slightly smaller font size */
+    }
+
+    .tag:hover {
+      background-color: #e0e0e0; /* Darker grey on hover */
+    }
+  </style>
+  {% endblock %}
+</div>
+
+{% block content %}
+<div class="py-12">
+  <div class="container mx-auto max-w-7xl px-4">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Posts</h2>
+    <!-- Search Form -->
+    <form method="GET" class="mb-6 flex space-x-2">
+      <input
+        type="text"
+        name="q"
+        placeholder="Search posts..."
+        value="{{ q }}"
+        class="w-full px-4 py-2 border border-gray-300 rounded"
+      />
+      <select name="filter" class="px-4 py-2 border border-gray-300 rounded">
+        <option value="">All</option>
+        <option value="free" {% if filter == 'free' %}selected{% endif %}>
+          Free
+        </option>
+        <option value="paid" {% if filter == 'paid' %}selected{% endif %}>
+          Paid
+        </option>
+      </select>
+      <button
+        type="submit"
+        class="px-4 py-2 bg-primary-600 text-white rounded"
+      >
+        Search
+      </button>
+      <a
+        href="{% url 'posts' %}"
+        class="px-4 py-2 bg-gray-500 text-white rounded inline-flex items-center"
+      >
+        Reset
+      </a>
+    </form>
+
+    <!-- Tags Display -->
+    <div class="tag-container">
+      {% for tag in tags %}
+      <a href="?q={{ q }} {{ tag }}" class="tag">{{ tag }}</a>
+      {% endfor %}
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for post in posts %}
+      <div
+        class="bg-white shadow rounded overflow-hidden relative"
+        data-post-id="{{ post.id }}"
+        data-post-title="{{ post.title }}"
+        data-post-author="{{ post.author.username }}"
+        data-post-thumbnail="{% if post.thumbnail %}{{ post.thumbnail.url }}{% else %}https://via.placeholder.com/400x300{% endif %}"
+        data-post-detail="{% url 'post_detail' post.id %}"
+      >
+        {% if post.thumbnail %}
+        <img
+          src="{{ post.thumbnail.url }}"
+          alt="{{ post.title }} image"
+          class="w-full h-48 object-cover"
+        />
+        {% else %}
+        <img
+          src="https://via.placeholder.com/400x300"
+          alt="Default image"
+          class="w-full h-48 object-cover"
+        />
+        {% endif %}
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">
+            <a href="{% url 'post_detail' post.id %}" class="hover:underline">
+              {{ post.title }}
+            </a>
+          </h3>
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-gray-700 line-clamp-3">
+              By
+              <span class="font-semibold text-blue-500 hover:underline">
+                {{ post.author.username }}
+              </span>
+            </p>
+            <button
+              class="wishlist-btn p-2 rounded-full bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+              onclick="toggleWishlist(event, this, '{{ post.id }}', '{{ post.title }}', '{{ post.author.username }}', '{% if post.thumbnail %}{{ post.thumbnail.url }}{% else %}https://via.placeholder.com/400x300{% endif %}', '{% url 'post_detail' post.id %}')"
+              data-post-id="{{ post.id }}"
+              aria-label="Add to wishlist"
+            >
+              <svg
+                class="w-6 h-6 fill-current text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81
+                     4.5 2.09C13.09 3.81 14.76 3 16.5 3
+                     19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55
+                     11.54L12 21.35z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <div>
+              {% if post.price %}
+              <span
+                class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded"
+              >
+                Paid
+              </span>
+              {% else %}
+              <span
+                class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded"
+              >
+                Free
+              </span>
+              {% endif %}
+            </div>
+            <a
+              href="{% url 'post_detail' post.id %}"
+              class="text-blue-600 hover:underline"
+            >
+              Read More
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-gray-600">No posts found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleWishlist(
+    event,
+    btn,
+    postId,
+    postTitle,
+    postAuthor,
+    postThumbnail,
+    postDetail
+  ) {
+    event.preventDefault();
+
+    // Use fallback for thumbnail if it's empty or contains "null"
+    if (!postThumbnail || postThumbnail.includes("null")) {
+      postThumbnail = "https://via.placeholder.com/400x300";
+    }
+
+    // Retrieve the current wishlist from localStorage, or start with an empty array.
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+    // Check if the post is already in the wishlist.
+    let index = wishlist.findIndex(function(item) {
+      return item.id === postId;
+    });
+
+    if (index >= 0) {
+      // Remove from wishlist.
+      wishlist.splice(index, 1);
+      btn.querySelector("svg").classList.remove("text-red-500");
+      btn.querySelector("svg").classList.add("text-gray-400");
+    } else {
+      // Add to wishlist.
+      wishlist.push({
+        id: postId,
+        title: postTitle,
+        author: postAuthor,
+        thumbnail: postThumbnail,
+        detail: postDetail,
+      });
+      btn.querySelector("svg").classList.remove("text-gray-400");
+      btn.querySelector("svg").classList.add("text-red-500");
+    }
+
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Update the heart icons on page load based on localStorage.
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    document.querySelectorAll(".wishlist-btn").forEach(function(btn) {
+      let postId = btn.getAttribute("data-post-id");
+      let exists = wishlist.some(function(item) {
+        return item.id === postId;
+      });
+      if (exists) {
+        btn.querySelector("svg").classList.remove("text-gray-400");
+        btn.querySelector("svg").classList.add("text-red-500");
+      }
+    });
+  });
+</script>
+{% endblock %}

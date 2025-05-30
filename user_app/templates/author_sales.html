@@ -1,0 +1,101 @@
+{% extends "base.html" %} {% block title %}My Sales{% endblock %}
+<div>
+  {% block content %}
+  <div class="py-12">
+    <div class="container mx-auto max-w-4xl px-4">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">My Sales</h1>
+
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Summary</h2>
+        <p class="text-gray-700">
+          Total Earnings:
+          <span class="font-bold">Rs. {{ total_earnings }}</span>
+        </p>
+        <p class="text-gray-700">
+          Total Sales: <span class="font-bold">{{ payments.count }}</span>
+        </p>
+      </div>
+
+      {% if payments %}
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Blog
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Customer
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Amount
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Date
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Transaction ID
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for payment in payments %}
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ payment.blog.title }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">
+                  {{ payment.user.email }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">
+                  Rs. {{ payment.amount }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">
+                  {{ payment.created_at|date:"M d, Y" }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  {{ payment.created_at|time:"H:i" }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ payment.transaction_id|truncatechars:10 }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="bg-white shadow rounded-lg p-6 text-center">
+        <p class="text-gray-700">You haven't made any sales yet.</p>
+        <p class="text-gray-600 mt-2">
+          Create private blogs to start selling your content.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endblock %}
+</div>

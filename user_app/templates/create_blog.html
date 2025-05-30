@@ -1,0 +1,143 @@
+{% extends "base.html" %} {% block title %} Create Blog {% endblock %}
+<div>
+  {% block extra_head %}
+  <style>
+    /* Add any custom CSS if needed */
+  </style>
+  <!-- Load TinyMCE from the free Cloud CDN -->
+  <script
+    src="https://cdn.tiny.cloud/1/glt1pogpokff380kcuvlmvx2njmyt0dllx2c2mxztc1jpzm8/tinymce/6/tinymce.min.js"
+    referrerpolicy="origin"
+  ></script>
+  {% endblock %}
+</div>
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 py-12">
+  <div class="max-w-2xl w-full bg-white shadow-md rounded-lg p-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+      Create Blog
+    </h2>
+    <form method="POST" enctype="multipart/form-data" id="blogForm">
+      {% csrf_token %}
+
+      <!-- Title Field -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Title</label>
+        <input
+          type="text"
+          name="title"
+          placeholder="Enter blog title"
+          required
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 outline-none"
+        />
+      </div>
+
+      <!-- Description Field (with TinyMCE) -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          placeholder="Enter blog description"
+          required
+          rows="5"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 outline-none"
+        ></textarea>
+      </div>
+
+      <!-- Status Field -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Status</label>
+        <select
+          name="status"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 outline-none"
+        >
+          <option value="draft">Draft</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <!-- Thumbnail Field -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Thumbnail</label>
+        <input type="file" name="thumbnail" accept="image/*" />
+      </div>
+
+      <!-- Tags Field -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Tags (comma-separated)</label>
+        <input
+          type="text"
+          name="tags"
+          placeholder="e.g., tech, design"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 outline-none"
+        />
+      </div>
+
+      <!-- Visibility Field -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Visibility</label>
+        <select
+          name="visibility"
+          id="visibility"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 outline-none"
+        >
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+      </div>
+
+      <!-- Price Field (if private) -->
+      <div class="mb-4" id="price_field" style="display: none">
+        <label class="block text-gray-700 mb-2">Price (if private)</label>
+        <input
+          type="text"
+          name="price"
+          placeholder="Enter price"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 outline-none"
+        />
+      </div>
+
+      <div class="text-right">
+        <button
+          type="submit"
+          class="px-3 py-1 border border-gray-800 text-gray-800 rounded"
+        >
+          Create Blog
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Toggle the price field based on the selected visibility.
+  const visibilitySelect = document.getElementById("visibility");
+  const priceField = document.getElementById("price_field");
+  visibilitySelect.addEventListener("change", function () {
+    priceField.style.display = this.value === "private" ? "block" : "none";
+  });
+
+  // Initialize TinyMCE on the description textarea.
+  tinymce.init({
+    selector: "#description",
+    menubar: false,
+    plugins: "lists link image table code",
+    toolbar:
+      "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code",
+    branding: false,
+    setup: function (editor) {
+      editor.on("change", function () {
+        tinymce.triggerSave();
+      });
+    },
+  });
+
+  // Add form submission event handler
+  document.getElementById("blogForm").addEventListener("submit", function (e) {
+    // Ensure TinyMCE content is saved to the textarea before form submission
+    tinymce.triggerSave();
+  });
+</script>
+{% endblock %}

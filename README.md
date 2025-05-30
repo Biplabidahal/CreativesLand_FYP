@@ -1,6 +1,6 @@
 - Project Title: Creative Writing Management System (Creatives' Land)
 - Tagline: "A platform for writers to create, share, and monetize content"
-- Academic Context: 
+- **Academic Context:**
   - University: University of Wolverhampton
   - Student: Biplabi Dahal
   - **User Management**: 

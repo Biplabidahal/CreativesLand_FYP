@@ -27,7 +27,7 @@
  Version Control - Github
  IDE - VS Code
 
-**. Installation Guide (Minimal)**
+**Installation Guide (Minimal)**
 1. Backend: 
    ```bash
    virtualenv env
